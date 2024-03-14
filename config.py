@@ -9,7 +9,7 @@ Answer:
 """
 
 INPUT_VARIABLES = ["context", "question"]
-SEPERATORS = "\n"
+SEPARATORS = "\n"
 CHUNK_SIZE = 10000
 CHUNK_OVERLAP = 1000
 EMBEDDER = 'BAAI/bge-base-en-v1.5'

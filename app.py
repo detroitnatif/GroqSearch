@@ -28,8 +28,8 @@ if st.session_state.clicked:
     
     col1, col2 = st.columns([1,2])
     
-    with col1:
-        st.image("res/assistant.png")
+    # with col1:
+    #     st.image("res/assistant.png")
 
     with col2:
         with st.expander("Command RoboWiz"):
