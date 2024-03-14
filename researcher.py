@@ -60,6 +60,19 @@ class Researcher:
     def create_vector_store(self, research_content):
         self.db = FAISS.from_documents(documents=self.text_splitter.split_documents(research_content))
         embedding=self.hfembeddings
+
+    
+    def research_given_query(self, research_query, research_content):
+        self.create_vector_store()
+        bot = RetrievalQA.from_chain_type(
+            llm = self.llm,
+            chain_type=CHAIN_TYPE,
+            retriever = self.db.as_retriever(search_kwargs = SEARCH_KWARGS),
+            verbose = True,
+            chain_type_kwargs={"prompt": self.prompt_template}
+        )
+        return bot
+    
     def research(self, user_query:str):
         search_articles = self.search_articles(user_query)
         urls = self.get_urls(search_articles)
