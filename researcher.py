@@ -43,5 +43,9 @@ class Researcher:
         return response.json()
 
 
+    def get_urls(self, articles):
+        
+
     def research(self, user_query:str):
         search_articles = self.search_articles(user_query)
+        urls = self.
