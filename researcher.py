@@ -34,18 +34,28 @@ class Researcher:
                         )
 
     def search_articles(self, query):
-
         url = "https://google.serper.dev/search"
-        data = json.dumps({"q":query})
+        data = json.dumps({"q": query})
 
         headers = {
-            'X-API-KEY': self.serper_api_key,
-            'Content-Type': 'application/json'
+        'X-API-KEY': self.serper_api_key,
+        'Content-Type': 'application/json'
         }
 
-        response = requests.request("POST", url, headers=headers, data=data)
+        try:
+            response = requests.post(url, headers=headers, data=data)
+            response.raise_for_status()  # Raises an HTTPError for bad responses
+            return response.json()
+        except requests.exceptions.HTTPError as e:
+            print(f"HTTP Error: {e}")
+        except requests.exceptions.ConnectionError as e:
+            print(f"Connection Error: {e}")
+        except requests.exceptions.Timeout as e:
+            print("Timeout Error:", e)
+        except requests.exceptions.RequestException as e:
+            print("Unexpected Error:", e)
+        return {}  # Return an empty dict in case of failure
 
-        return response.json()
     
     def research_answerer(self):
     
