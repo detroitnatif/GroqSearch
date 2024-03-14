@@ -44,8 +44,24 @@ class Researcher:
 
 
     def get_urls(self, articles):
-        
+        urls = []
+        try:
+            urls.append(articles['answerBox']['link'])
+        except:
+            pass
+        for i in range(0, min(3, len(len(articles['organic'])))):
+            urls.append(articles['organic'][i]['link'])
+        return urls
 
+    def get_content_from_url(self, urls: list):
+        loader = UnstructuredURLLoader(urls=urls)
+        return loader.load()
+    
+    def create_vector_store(self, research_content):
+        self.db = FAISS.from_documents(documents=self.text_splitter.split_documents(research_content))
+        embedding=self.hfembeddings
     def research(self, user_query:str):
         search_articles = self.search_articles(user_query)
-        urls = self.
+        urls = self.get_urls(search_articles)
+        research_content = self.get_content_from_url(urls)
+        self.create_vector_store(research_content)
