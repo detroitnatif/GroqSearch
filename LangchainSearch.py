@@ -1,7 +1,6 @@
 import os
 import streamlit as st
 from dotenv import load_dotenv, find_dotenv
-from langchain.llms import OpenAI
 from langchain_groq import ChatGroq
 from langchain import hub
 from langchain.agents import load_tools, AgentExecutor, create_react_agent
@@ -23,14 +22,17 @@ class LangchainSearchApp:
         if 'conversation_history' not in st.session_state:
             st.session_state.conversation_history = []
         
+        # Building the context from the conversation history
         context = [entry['user'] for entry in st.session_state.conversation_history if 'user' in entry]
         context += [entry['agent'] for entry in st.session_state.conversation_history if 'agent' in entry]
-
-        # Print the context for debugging
-        print("Current context being passed:", context)  # This will print in your console
         
-        response = self.agent_executor.invoke({"input": prompt, "context": context}, {"callbacks": [self.st_callback]})
+        # Concatenating the user's current question with the context
+        context_str = " ".join(context + [prompt])  # Add the current prompt to the context
         
+        # Invoke the agent with the concatenated context
+        response = self.agent_executor.invoke({"input": prompt, "context": context_str}, {"callbacks": [self.st_callback]})
+        
+        # Update the conversation history
         st.session_state.conversation_history.append({'user': prompt})
         
         if response and "output" in response:
@@ -53,8 +55,8 @@ class LangchainSearchApp:
 
         if submit_button:
             response_output = self.invoke_agent(user_input)
-            # Use st.experimental_rerun() to refresh the app and clear the input field
-            st.experimental_rerun()
+            # Trigger a rerun of the app to refresh and display the latest conversation
+            st.rerun()
 
 if __name__ == "__main__":
     loop = asyncio.new_event_loop()
