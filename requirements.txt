@@ -102,9 +102,9 @@ threadpoolctl==3.3.0
 tokenizers==0.15.2
 toml==0.10.2
 toolz==0.12.1
-torch==2.2.1+cu118
-torchaudio==2.2.1+cu118
-torchvision==0.17.1+cu118
+torch==2.2.1
+torchaudio==2.2.1
+torchvision==0.17.1
 tornado==6.4
 tqdm==4.66.2
 transformers==4.38.2
