@@ -50,6 +50,7 @@ class LangchainSearchApp:
             return "An error occurred, or the response was not in the expected format."
 
     def run(self):
+        st.title("GroqSearch")
         if 'conversation_history' in st.session_state:
             for interaction in st.session_state.conversation_history:
                 if 'user' in interaction:
