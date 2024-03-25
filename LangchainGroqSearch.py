@@ -18,21 +18,6 @@ class LangchainSearchApp:
         self.agent_executor = AgentExecutor(agent=self.agent, tools=self.tools, verbose=True, handle_parsing_errors=True)
         self.st_callback = StreamlitCallbackHandler(st.container())
 
-    def display_output(self, text, label, color="black"):
-        """
-        Displays output text with specified label and color.
-        """
-        sanitized_text = text.replace("\n", "<br>")  # Convert newlines to HTML breaks for proper rendering
-        html_content = f"""
-        <style>
-            .text-output {{
-                color: {color};
-            }}
-        </style>
-        <div class="text-output"><b>{label}:</b><br>{sanitized_text}</div>
-        """
-        st.markdown(html_content, unsafe_allow_html=True)
-
     def enrich_query_with_context(self, prompt):
         # Extract the last agent response from the conversation history
         last_response = ""
@@ -44,6 +29,7 @@ class LangchainSearchApp:
         # Combine the last response with the new prompt for enriched context
         enriched_prompt = f"{last_response} {prompt}" if last_response else prompt
         return enriched_prompt
+    
 
     def invoke_agent(self, prompt):
         if 'conversation_history' not in st.session_state:
@@ -60,37 +46,44 @@ class LangchainSearchApp:
         
         if response and "output" in response:
             st.session_state.conversation_history.append({'agent': response["output"]})
-            self.display_output(response["output"], "Assistant", color="black")  # Use display_output for rendering
+            
+            # Check if the response includes DuckDuckGo search results
+            if "duckduckgo_search" in response:
+                # Extract the DuckDuckGo search results
+                duckduckgo_results = response["duckduckgo_search"]
+                # Display the results in a container
+                with st.container():
+                    st.markdown(duckduckgo_results, unsafe_allow_html=True)
+            print("IIIIIII")
             return response["output"]
-           
         else:
             return "An error occurred, or the response was not in the expected format."
 
+
     def run(self):
-        st.title("GroqSearch")
         st.markdown(f"""
-    <h1 style='text-align: center; color: black;'>GroqSearch</h1>
-    <style>
-    .caption-style {{
-        color: grey;
-        text-align: center;
-    }}
-    .stApp {{
-        background-color: white;
-    }}
-    .stTextInput>div>div>input {{
-        color: black !important;
-        background-color: white !important;
-        border-color: grey !important;
-        caret-color: blue; /* Adds a blue blinking cursor */
-    }}
-    
-    .stTextInput>div {{
-        border-color: grey !important;
-    }}
-    </style>
-    <p class='caption-style'>Search the web with Mistral and Groq</p>
-    """, unsafe_allow_html=True)
+            <h1 style='text-align: center; color: black;'>GroqSearch</h1>
+            <style>
+            .caption-style {{
+                color: grey;
+                text-align: center;
+            }}
+            .stApp {{
+                background-color: white;
+            }}
+            .stTextInput>div>div>input {{
+                color: black !important;
+                background-color: white !important;
+                border-color: grey !important;
+                caret-color: blue; /* Adds a blue blinking cursor */
+            }}
+            
+            .stTextInput>div {{
+                border-color: grey !important;
+            }}
+            </style>
+            <p class='caption-style'>Search the web with Mistral and Groq</p>
+            """, unsafe_allow_html=True)
 
         if 'conversation_history' in st.session_state:
             for interaction in st.session_state.conversation_history:
@@ -105,7 +98,7 @@ class LangchainSearchApp:
 
         if submit_button:
             response_output = self.invoke_agent(user_input)
-            st.experimental_rerun()
+            st.rerun()
 
 
 
