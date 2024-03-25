@@ -7,3 +7,4 @@ langchain-text-splitters==0.0.1
 langdetect==1.0.9
 langsmith==0.1.14
 python-dotenv==1.0.1
+duckduckgo-search==5.1.0

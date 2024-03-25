@@ -18,6 +18,21 @@ class LangchainSearchApp:
         self.agent_executor = AgentExecutor(agent=self.agent, tools=self.tools, verbose=True, handle_parsing_errors=True)
         self.st_callback = StreamlitCallbackHandler(st.container())
 
+    def display_output(self, text, label, color="black"):
+        """
+        Displays output text with specified label and color.
+        """
+        sanitized_text = text.replace("\n", "<br>")  # Convert newlines to HTML breaks for proper rendering
+        html_content = f"""
+        <style>
+            .text-output {{
+                color: {color};
+            }}
+        </style>
+        <div class="text-output"><b>{label}:</b><br>{sanitized_text}</div>
+        """
+        st.markdown(html_content, unsafe_allow_html=True)
+
     def enrich_query_with_context(self, prompt):
         # Extract the last agent response from the conversation history
         last_response = ""
@@ -45,7 +60,9 @@ class LangchainSearchApp:
         
         if response and "output" in response:
             st.session_state.conversation_history.append({'agent': response["output"]})
+            self.display_output(response["output"], "Assistant", color="black")  # Use display_output for rendering
             return response["output"]
+           
         else:
             return "An error occurred, or the response was not in the expected format."
 
