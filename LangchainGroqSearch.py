@@ -66,9 +66,37 @@ class LangchainSearchApp:
             response_output = self.invoke_agent(user_input)
             st.experimental_rerun()
 
+import pkg_resources
+import importlib
+
+
+
 if __name__ == "__main__":
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
+    # List of imported modules in your script
+    imported_modules = [
+    'os',
+    'streamlit',
+    'dotenv',
+    'langchain_groq',
+    'langchain',
+    'asyncio'
+    ]
+
+    for module_name in imported_modules:
+        try:
+            # Attempt to import the module to ensure it's a valid import
+            module = importlib.import_module(module_name)
+            # Get the version of the module
+            version = pkg_resources.get_distribution(module_name).version
+            print(f"{module_name}: {version}")
+        except ImportError:
+            print(f"{module_name}: Module not found.")
+        except Exception as e:
+            print(f"Error retrieving version for {module_name}: {e}")   
+
+
 
     app = LangchainSearchApp()
     app.run()
