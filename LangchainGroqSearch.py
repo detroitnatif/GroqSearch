@@ -51,6 +51,30 @@ class LangchainSearchApp:
 
     def run(self):
         st.title("GroqSearch")
+        st.markdown(f"""
+    <h1 style='text-align: center; color: black;'>GroqSearch</h1>
+    <style>
+    .caption-style {{
+        color: grey;
+        text-align: center;
+    }}
+    .stApp {{
+        background-color: white;
+    }}
+    .stTextInput>div>div>input {{
+        color: black !important;
+        background-color: white !important;
+        border-color: grey !important;
+        caret-color: blue; /* Adds a blue blinking cursor */
+    }}
+    
+    .stTextInput>div {{
+        border-color: grey !important;
+    }}
+    </style>
+    <p class='caption-style'>Search the web with Mistral and Groq</p>
+    """, unsafe_allow_html=True)
+
         if 'conversation_history' in st.session_state:
             for interaction in st.session_state.conversation_history:
                 if 'user' in interaction:
@@ -66,37 +90,12 @@ class LangchainSearchApp:
             response_output = self.invoke_agent(user_input)
             st.experimental_rerun()
 
-import pkg_resources
-import importlib
 
 
 
 if __name__ == "__main__":
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    # List of imported modules in your script
-    imported_modules = [
-    'os',
-    'streamlit',
-    'dotenv',
-    'langchain_groq',
-    'langchain',
-    'asyncio'
-    ]
-
-    for module_name in imported_modules:
-        try:
-            # Attempt to import the module to ensure it's a valid import
-            module = importlib.import_module(module_name)
-            # Get the version of the module
-            version = pkg_resources.get_distribution(module_name).version
-            print(f"{module_name}: {version}")
-        except ImportError:
-            print(f"{module_name}: Module not found.")
-        except Exception as e:
-            print(f"Error retrieving version for {module_name}: {e}")   
-
-
 
     app = LangchainSearchApp()
     app.run()
