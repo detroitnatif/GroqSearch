@@ -41,6 +41,7 @@ class LangchainSearchApp:
             {"input": enriched_prompt},
             {"callbacks": [self.st_callback]}
         )
+
         
         st.session_state.conversation_history.append({'user': prompt})
         
@@ -51,10 +52,12 @@ class LangchainSearchApp:
             if "duckduckgo_search" in response:
                 # Extract the DuckDuckGo search results
                 duckduckgo_results = response["duckduckgo_search"]
+                
+                print('is this working' , duckduckgo_results)
                 # Display the results in a container
                 with st.container():
                     st.markdown(duckduckgo_results, unsafe_allow_html=True)
-            print("IIIIIII")
+           
             return response["output"]
         else:
             return "An error occurred, or the response was not in the expected format."
